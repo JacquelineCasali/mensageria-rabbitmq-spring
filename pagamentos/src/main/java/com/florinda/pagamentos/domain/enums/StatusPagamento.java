@@ -1,4 +1,4 @@
-package com.florinda.pagamentos.enums;
+package com.florinda.pagamentos.domain.enums;
 
 public enum StatusPagamento {
     CRIADO, CONFIRMADO, CANCELADO

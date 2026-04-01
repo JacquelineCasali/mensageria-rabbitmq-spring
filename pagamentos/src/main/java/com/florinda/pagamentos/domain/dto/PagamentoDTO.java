@@ -1,6 +1,6 @@
-package com.florinda.pagamentos.dto;
+package com.florinda.pagamentos.domain.dto;
 
-import com.florinda.pagamentos.model.Pagamento;
+import com.florinda.pagamentos.domain.model.Pagamento;
 
 import java.math.BigDecimal;
 

@@ -1,6 +1,6 @@
-package com.florinda.pagamentos.model;
+package com.florinda.pagamentos.domain.model;
 
-import com.florinda.pagamentos.enums.StatusPagamento;
+import com.florinda.pagamentos.domain.enums.StatusPagamento;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

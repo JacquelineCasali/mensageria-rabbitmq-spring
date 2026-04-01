@@ -1,12 +1,14 @@
 package com.florinda.pagamentos.controller;
 
-import com.florinda.pagamentos.dto.PagamentoDTO;
-import com.florinda.pagamentos.model.Pagamento;
+import com.florinda.pagamentos.domain.dto.PagamentoDTO;
+import com.florinda.pagamentos.domain.model.Pagamento;
 import com.florinda.pagamentos.repository.PagamentoRepository;
 
 
+import com.florinda.pagamentos.service.PagamentoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,35 +18,23 @@ import java.util.List;
 @RequestMapping("/pagamentos")
 public class PagamentoController {
 
-    private final PagamentoRepository repository;
+    private final PagamentoService service;
 
-    public PagamentoController(PagamentoRepository repository) {
-        this.repository = repository;
+    public PagamentoController(PagamentoService service) {
+        this.service = service;
     }
 
-
     @GetMapping
-    public List<PagamentoDTO> lista(){
-       List<Pagamento> pagamentos =repository.findAll();
-        return pagamentos.stream().map(PagamentoDTO::new).toList();
+    public ResponseEntity<List<PagamentoDTO>> lista(){
+        return ResponseEntity.ok(service.lista());
     }
 @GetMapping("/{id}")
     public ResponseEntity<PagamentoDTO> buscaPorId(@PathVariable Long id){
-
-    Pagamento pagamento = repository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
-    return ResponseEntity.ok(new PagamentoDTO(pagamento));
-
+return ResponseEntity.status(HttpStatus.OK).body(service.buscarPorId(id));
 }
 
     @PutMapping("/{id}")
-    @Transactional
-    public  ResponseEntity<PagamentoDTO> confirma(@PathVariable("id") Long id) {
-        return repository.findById(id)
-                .map(pagamento -> {
-                    pagamento.confirma();
-                    return ResponseEntity.ok(new PagamentoDTO(pagamento));
-                })
-                .orElse(ResponseEntity.notFound().build());
+   public  ResponseEntity<PagamentoDTO> confirma(@PathVariable("id") Long id) {
+      return ResponseEntity.ok(service.confirma(id));
     }
 }
