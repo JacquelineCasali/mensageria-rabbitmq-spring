@@ -1,13 +1,8 @@
 package com.florinda.pagamentos.controller;
 
 import com.florinda.pagamentos.domain.dto.PagamentoDTO;
-import com.florinda.pagamentos.domain.model.Pagamento;
-import com.florinda.pagamentos.repository.PagamentoRepository;
-
 
 import com.florinda.pagamentos.service.PagamentoService;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

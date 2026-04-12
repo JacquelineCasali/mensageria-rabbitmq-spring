@@ -1,0 +1,17 @@
+package com.florinda.pedidos.repository;
+
+import com.florinda.pedidos.domain.model.Pedido;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+
+public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+
+
+
+    @Query("select p from Pedido p join fetch p.itensPedido i join fetch i.itemCardapio ic order by p.id")
+    List<Pedido> listaComItens();
+
+}
