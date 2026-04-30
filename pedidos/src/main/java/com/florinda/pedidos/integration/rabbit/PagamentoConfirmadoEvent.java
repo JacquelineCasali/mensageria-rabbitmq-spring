@@ -1,4 +1,4 @@
-package com.florinda.pedidos.rabbit;
+package com.florinda.pedidos.integration.rabbit;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
