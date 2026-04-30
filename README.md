@@ -1,102 +1,149 @@
-# Integração Assíncrona com RabbitMQ
-Este repositório contém um projeto usado em uma live sobre integração assíncrona com mensageria (RabbitMQ).
-São três microserviços independentes que ilustram comunicação síncrona (REST) e assíncrona (mensageria): pedidos, pagamentos e notas-fiscais.
+# 🐇 Arquitetura de Microsserviços com RabbitMQ (Integração Assíncrona)
 
-## Visão geral
-O objetivo desta base é demonstrar um cenário realista de integração entre microserviços usando padrões síncronos (chamadas REST) e assíncronos (RabbitMQ). Cada serviço tem seu próprio banco de dados MySQL e responsabilidades de domínio:
+Projeto que demonstra integração entre microserviços utilizando comunicação síncrona (REST) e assíncrona (RabbitMQ), simulando um fluxo real de negócio com foco em desacoplamento, escalabilidade e resiliência.
 
-✔️ pedidos: gestão de pedidos (criação, consulta). Porta: 8080.
 
-✔️ pagamentos: processamento de pagamento associado a pedidos. Porta: 8081.
+---
 
-✔️ notas-fiscais: emissão/registro de notas fiscais com integração ao serviço de pedidos. Porta: 8082.
+## 📊 Arquitetura do Sistema
 
-## Pré-requisitos
+![mensageria.png](mensageria.png)
 
-JDK 17
-Maven
-IntelliJ IDEA (ou outra IDE Java com suporte a Spring Boot)
-Postman (para importar e executar as collections fornecidas)
+A aplicação é composta por **3 microserviços independentes**, cada um com responsabilidade de domínio e banco de dados próprio.
 
-## Tecnologias
-Spring Boot
-Spring Data JPA + Hibernate
-Flyway (migrações de banco)
-MySQL
-RabbitMQ
-Maven (build)
-## Descrição dos módulos (domínio e tech)
-🔹pedidos
+### 🔹 Serviços
 
-✔️ Domínio: criação e consulta de pedidos, expõe API REST.
+- **Pedidos (8080)**  
+  Responsável pela criação e consulta de pedidos
 
-✔️ Tech: Spring Boot, JPA, Flyway, MySQL.
+- **Pagamentos (8081)**  
+  Processamento de pagamentos vinculados aos pedidos
 
-✔️ Main: com.florinda.pedidos.PedidosApplication.
+- **Notas Fiscais (8082)**  
+  Emissão e registro de notas fiscais a partir de eventos
 
-✔️ DB: florinda_pedidos
+---
 
-📟 pagamentos
+## 🔄 Comunicação
 
-✔️ Domínio: criação/registro de pagamentos
+- **Síncrona (REST):**
+    - Consultas entre serviços
+    - Recuperação de dados
 
-✔️ Tech: Spring Boot, JPA, Flyway, MySQL.
+- **Assíncrona (RabbitMQ):**
+    - Processamento de eventos
+    - Desacoplamento entre serviços
+    - Comunicação resiliente
 
-✔️ Main: com.florinda.pagamentos.PagamentosApplication.
+---
 
-✔️ DB: florinda_pagamentos.
+## 🚀 Tecnologias
 
-📝 notas-fiscais
+- Java 17
+- Spring Boot
+- Spring Data JPA / Hibernate
+- Flyway (migração de banco)
+- MySQL
+- RabbitMQ
+- Maven
 
-✔️ Domínio: emissão e armazenamento de notas fiscais a partir de integrações com pedidos.
+---
 
-✔️ Tech: Spring Boot, consumo de APIs REST de pedidos para alguns fluxos e possivelmente eventos.
+## 📦 Estrutura dos Módulos
 
-✔️ Main: com.florinda.notasfiscais.NotasFiscaisApplication.
+### 📌 pedidos
 
-Como executar
+- API REST para gestão de pedidos
+- Banco: `florinda_pedidos`
+- Main: `PedidosApplication`
 
-Iniciar o banco MySQL
-Iniciar as aplicações na IDE (IntelliJ):
-Abra a pasta do repositório como um projeto Maven.
-Aguarde o download das dependências.
-Para cada módulo (pedidos, pagamentos, notas-fiscais) localize a classe *Application (ex.: PedidosApplication) e execute como aplicação Spring Boot.
-Exemplo de execução a partir do terminal (opcional):
+---
 
-# Na raiz de cada módulo
+### 💳 pagamentos
+
+- Processamento de pagamentos
+- Integração com pedidos
+- Banco: `florinda_pagamentos`
+- Main: `PagamentosApplication`
+
+---
+
+### 🧾 notas-fiscais
+
+- Emissão de notas fiscais baseada em eventos
+- Consumo de APIs e mensageria
+- Main: `NotasFiscaisApplication`
+
+---
+
+## ⚙️ Como executar o projeto
+
+### 📌 Pré-requisitos
+
+- JDK 17
+- Maven
+- MySQL
+- RabbitMQ
+
+---
+
+### 📌 1. Subir infraestrutura
+
+- Iniciar MySQL
+- Iniciar RabbitMQ
+
+---
+
+### 📌 2. Executar os serviços
+
+```bash
+# Dentro de cada módulo
 mvn clean spring-boot:run -DskipTests
+```
+### 📌 Endpoints
 
-Verifique as portas e endpoints:
+- Pedidos → http://localhost:8080
+- Pagamentos → http://localhost:8081
+- Notas fiscais → http://localhost:8082
 
-pedidos → http://localhost:8080
+### 📬 Testes com Postman
 
-pagamentos → http://localhost:8081
+O projeto possui collections para simular os fluxos:
 
-notas-fiscais → http://localhost:8082
+### 🔹 Pedidos
+- Criar pedido
+- Consultar pedido
 
-Postman — collections
+### 🔹 Pagamentos
+- Processar pagamento
+- Consultar status
 
-Existem collections Postman fornecidas para facilitar os testes e demonstrar os fluxos. Arquivos (na raiz de cada módulo):
+### 🔹 Notas Fiscais
+- Emissão baseada em eventos
+- Integração com pedidos
 
-notas-fiscais/florinda-eats-notas-fiscais.postman_collection.json
+## 🔥 Fluxo do Sistema
 
-pagamentos/florinda-eats-notas-fiscais.postman_collection.json
+1. Criar pedido (Pedidos)
+2. Processar pagamento (Pagamentos)
+3. Emitir nota fiscal (Notas Fiscais)
+4. Comunicação via eventos (RabbitMQ)
 
-pedidos/florinda-eats-pedidos.postman_collection.json
+## 📌 Diferenciais do Projeto
 
-O que as collections fazem (resumo):
+- [x] Arquitetura baseada em microsserviços
+- [x] Comunicação síncrona e assíncrona
+- [x] Uso de mensageria com RabbitMQ
+- [x] Banco de dados isolado por serviço
+- [x] Desacoplamento entre domínios
+- [x] Estrutura preparada para escalabilidade
 
-pedidos collection:
+## 👩‍💻 Autora
 
-Endpoints para criar pedidos, consultar pedidos, listar itens.
+Jacqueline Casali
 
-Fluxo típico: criar pedido → obter id → consultar status.
+🔗 GitHub: https://github.com/JacquelineCasali
 
-pagamentos collection:
+🔗 Portfólio: https://casali.vercel.app
 
-Endpoints para simular criação de pagamento e consulta de status do pagamento.
-
-Usar para testar integrações entre pedido → processamento de pagamento.
-
-notas-fiscais collection:
-
+🔗 LinkedIn: https://www.linkedin.com/in/jaquelinecasali/
