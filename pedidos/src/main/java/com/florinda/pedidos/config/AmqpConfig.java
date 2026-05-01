@@ -1,10 +1,7 @@
 package com.florinda.pedidos.config;
 
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +11,23 @@ import org.springframework.context.annotation.Configuration;
 public class AmqpConfig {
     public static final String PAGAMENTOS_CONFIRMADO_QUEUE = "pedidos.pagamentos-confirmado";
 
+    public static final String PAGAMENTO_CONFIRMADO_DLQ =PAGAMENTOS_CONFIRMADO_QUEUE + ".dlq";
+    public static final String PEDIDOS_DLX = "pedidos.dlx";
 
-    // public static final String PAGAMENTOS_EXCHANGE = "pagamentos";
-
+    @Bean
+   public DirectExchange pedidosDLX(){
+       return new DirectExchange(PEDIDOS_DLX);
+   }
+    @Bean
+    public Queue pedidosPagamentosConfirmadoDLQ() {
+        return new Queue(PAGAMENTO_CONFIRMADO_DLQ);
+    }
+    @Bean
+    public Binding pedidosPagamentosConfirmadoDLQBinding(Queue pedidosPagamentosConfirmadoDLQ, DirectExchange pedidosDLX ){
+       return BindingBuilder.bind(pedidosPagamentosConfirmadoDLQ)
+               .to(pedidosDLX)
+               .with(PAGAMENTO_CONFIRMADO_DLQ);
+    }
 
     @Bean
     public MessageConverter jsonMessageConverter(){
@@ -29,8 +40,11 @@ public class AmqpConfig {
     }
 
     @Bean
-        public Queue filaPagamentosConfirmadosPedido(){
-            return new Queue(PAGAMENTOS_CONFIRMADO_QUEUE);
+   public Queue filaPagamentosConfirmadosPedido(){
+            return QueueBuilder.durable(PAGAMENTOS_CONFIRMADO_QUEUE)
+                   .deadLetterExchange(PEDIDOS_DLX)
+                   .deadLetterRoutingKey(PAGAMENTO_CONFIRMADO_DLQ)
+                   .build();
     }
     @Bean
     public Binding bindingPagamentosConfirmados(Queue filaPagamentosConfirmadosPedido,
